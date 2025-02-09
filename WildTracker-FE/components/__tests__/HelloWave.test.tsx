@@ -18,3 +18,7 @@ test('renders HelloWave component correctly', () => {
   const { getByText } = render(<HelloWave />);
   expect(getByText('👋')).toBeTruthy();
 });
+
+test('does not crash due to animation', () => {
+    expect(() => render(<HelloWave />)).not.toThrow();
+  });
