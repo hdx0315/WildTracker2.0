@@ -13,7 +13,7 @@ const IntroThree = () => {
       const router = useRouter();
     
       const handleNextPress = () => {
-        router.push('/auth');
+        router.push('/auth/AuthLoading');
       }
       const handleBackPress = () => {
         router.push('/pages/IntroTwo');

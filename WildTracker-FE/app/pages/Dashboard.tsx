@@ -1,5 +1,9 @@
+
+
+
+
 import React, { useEffect, useRef, useState } from 'react';
-import { View, Text, ScrollView, TouchableOpacity, ImageBackground, Image } from 'react-native';
+import { View, Text, ScrollView, TouchableOpacity, ImageBackground, Image,ActivityIndicator } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useRouter } from 'expo-router';
 import { MaterialCommunityIcons } from '@expo/vector-icons';
@@ -11,6 +15,7 @@ import img3 from '../../assets/images/edu3.jpg';
 import img4 from '../../assets/images/edu4.jpg';
 import { collection, query, orderBy, limit, getDocs } from 'firebase/firestore';
 import { firestore } from '../../firebase/config';
+import { getUserData } from '../../utils/auth'; // Add this import
 
 const Button = ({ icon, label, onPress }) => (
   <TouchableOpacity
@@ -27,7 +32,9 @@ const Button = ({ icon, label, onPress }) => (
 
 export default function Dashboard() {
   const router = useRouter();
-  const username = "John";
+ // const username = "John";
+  
+  const [user, setUser] = useState(null); // Add user state
 
   const [incidents, setIncidents] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -35,6 +42,20 @@ export default function Dashboard() {
 
   // Create a ref for the MapView so we can adjust its region later
   const mapRef = useRef(null);
+
+  useEffect(() => {
+    const loadUserData = async () => {
+      try {
+        const userData = await getUserData();
+        setUser(userData);
+      } catch (error) {
+        console.error('Error loading user data:', error);
+      }
+    };
+
+    loadUserData();
+  }, []);
+
 
   const fetchIncidents = async () => {
     try {
@@ -100,14 +121,27 @@ export default function Dashboard() {
   }, [incidents]);
 
   return (
+
     <SafeAreaView className="h-full bg-emerald-50">
-      <ImageBackground source={img} resizeMode="cover">
-        <View className="py-10 px-6 bg-black/10">
+      <ImageBackground source={img} resizeMode="cover" className=''>
+        <View className="py-10 px-6 bg-black/40">
           <Text className="text-3xl font-bold text-white">
-            Welcome {username}!
+            Welcome {user?.name || 'Wildlife Protector'}!
+          </Text>
+          <Text className="text-white/80 mt-1">
+            {user?.email ? `Logged in as ${user.email}` : ''}
           </Text>
         </View>
       </ImageBackground>
+
+      {/* Loading indicator */}
+      {!user && (
+        <View className="p-4">
+          <ActivityIndicator size="small" color="#059669" />
+        </View>
+      )}
+
+      
 
       <ScrollView>
         <View className="p-6">

@@ -64,6 +64,11 @@ const ReportIncident = () => {
   // Handle form submission
   const handleSubmitReport = async () => {
     try {
+      // Add user check
+      if (!auth.currentUser) {
+        Alert.alert('Error', 'You must be logged in to submit a report');
+        return;
+      }
       if (!location) {
         Alert.alert('Error', 'Location not available. Please try again.');
         return;
@@ -100,7 +105,7 @@ const ReportIncident = () => {
 
       // Add new document with generated ID
       await addDoc(incidentsRef, {
-        reporterId: 1,
+        reporterId: auth.currentUser.uid, 
         incidentType,
         description,
         location: {
